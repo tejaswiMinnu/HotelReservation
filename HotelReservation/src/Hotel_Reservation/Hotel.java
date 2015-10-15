@@ -9,18 +9,19 @@ import java.util.Set;
 
 public class Hotel {
 	private List<Reservation> totalRooms;
-	private Map<String,Reservation> reservedRooms;
+	private Map<String,List<Reservation>> reservedRooms;
 	
 	public Hotel(){
 		
 	}
 	public Hotel(int numberOfRooms){
 		totalRooms = new ArrayList<Reservation>();
-		reservedRooms = new HashMap<String,Reservation>();
+		reservedRooms = new HashMap<String,List<Reservation>>();
 		for(int i=0;i<numberOfRooms;i++){
 			Reservation reservation = new Reservation(i+1,null);
 			totalRooms.add(reservation);
 		}
+		//System.out.println(totalRooms);
 	}
 	public int reserveRoom(String person){
 		int freeRoomIndex = getAFreeRoom();
@@ -30,7 +31,15 @@ public class Hotel {
 		Reservation r = totalRooms.get(freeRoomIndex);
 		r.setCustomerName(person);
 		r.setReserved(true);
-		reservedRooms.put(person, r);
+		if(reservedRooms.containsKey(person)){
+			List<Reservation> reservations = reservedRooms.get(person);
+			reservations.add(r);
+		} else {
+			List<Reservation> reservations = new ArrayList<Reservation>();
+			reservations.add(r);
+			reservedRooms.put(person, reservations);
+		}
+		//reservedRooms.put(person, r);
 		return r.getRoomNo();
 	}
 	
@@ -41,14 +50,26 @@ public class Hotel {
 		}
 		r.setReserved(true);
 		r.setCustomerName(person);
-		reservedRooms.put(person, r);
+		if(reservedRooms.containsKey(person)){
+			List<Reservation> reservations = reservedRooms.get(person);
+			reservations.add(r);
+		} else {
+			List<Reservation> reservations = new ArrayList<Reservation>();
+			reservations.add(r);
+			reservedRooms.put(person, reservations);
+		}
 		return true;
 	}
 	
 	public void cancelReservations(String person){
-		Reservation r = reservedRooms.get(person);
-		r.setReserved(false);
-		r.setCustomerName(null);
+		List<Reservation> reservations = reservedRooms.get(person);
+		for(int i=0;i<reservations.size();i++){
+			Reservation r = reservations.get(i);
+			r.setReserved(false);
+			r.setCustomerName(null);
+			clearRoomByRoomId(r.getRoomNo());
+		}
+		reservedRooms.remove(person);
 	}
 	
 	public void printReservations(){
@@ -79,6 +100,26 @@ public class Hotel {
 		}
 		
 		return null;
+	}
+	
+	public int getRoomIndexByRoomNo(int roomNo){
+		for(int i=0;i<totalRooms.size();i++){
+			Reservation r = totalRooms.get(i);
+			if(r.getRoomNo()==roomNo && !r.isReserved()){
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public void clearRoomByRoomId(int roomNum){
+		int index = getRoomIndexByRoomNo(roomNum);
+		if(index != -1){
+			totalRooms.get(index).setReserved(false);
+			totalRooms.get(index).setCustomerName(null);
+		}
+		
 	}
 	
 }
