@@ -81,7 +81,7 @@ public class Hotel {
 		}
 	}
 	
-	public int getAFreeRoom(){
+	private int getAFreeRoom(){
 		for(int i=0;i<totalRooms.size();i++){
 			Reservation r = totalRooms.get(i);
 			if(!r.isReserved()){
@@ -91,7 +91,7 @@ public class Hotel {
 		return -1;
 	}
 	
-	public Reservation getRoomByRoomNo(int roomNo){
+	private Reservation getRoomByRoomNo(int roomNo){
 		for(int i=0;i<totalRooms.size();i++){
 			Reservation r = totalRooms.get(i);
 			if(r.getRoomNo()==roomNo && !r.isReserved()){
@@ -102,7 +102,7 @@ public class Hotel {
 		return null;
 	}
 	
-	public int getRoomIndexByRoomNo(int roomNo){
+	private int getRoomIndexByRoomNo(int roomNo){
 		for(int i=0;i<totalRooms.size();i++){
 			Reservation r = totalRooms.get(i);
 			if(r.getRoomNo()==roomNo && !r.isReserved()){
@@ -113,7 +113,7 @@ public class Hotel {
 		return -1;
 	}
 	
-	public void clearRoomByRoomId(int roomNum){
+	private void clearRoomByRoomId(int roomNum){
 		int index = getRoomIndexByRoomNo(roomNum);
 		if(index != -1){
 			totalRooms.get(index).setReserved(false);
